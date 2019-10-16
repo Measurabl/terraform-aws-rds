@@ -286,6 +286,12 @@ variable "option_group_name" {
   default     = ""
 }
 
+variable "option_group_version" {
+  type        = string
+  description = "A version identifier to append to the option group name"
+  default     = ""
+}
+
 variable "kms_key_arn" {
   type        = string
   description = "The ARN of the existing KMS key to encrypt storage"
