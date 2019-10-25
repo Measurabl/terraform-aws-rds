@@ -129,13 +129,6 @@ resource "aws_security_group" "default" {
   description = "Allow inbound traffic from the security groups"
   vpc_id      = var.vpc_id
 
-  ingress {
-    from_port       = var.database_port
-    to_port         = var.database_port
-    protocol        = "tcp"
-    security_groups = var.security_group_ids
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -144,6 +137,19 @@ resource "aws_security_group" "default" {
   }
 
   tags = module.label.tags
+}
+
+resource "aws_security_group_rule" "default_ingress" {
+  for_each = toset(var.security_group_ids)
+
+  description              = "default security group ingress"
+  type                     = "ingress"
+  from_port                = var.database_port
+  to_port                  = var.database_port
+  protocol                 = "tcp"
+  source_security_group_id = each.value
+
+  security_group_id = aws_security_group.default.*.id
 }
 
 module "dns_host_name" {
